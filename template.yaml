@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    power-of-math
+
+    Sample SAM Template for power-of-math application
+
+Globals:
+    Function:
+        Timeout: 3
+
+Parameters:
+    StageName:
+        Type: String
+        Default: staging
+
+Resources:
+    PowerOfMathApi:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName:
+                Ref: StageName
+            Cors:
+                AllowMethods: "'POST,OPTIONS'"
+                AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                AllowOrigin: "'*'"
+
+    PowerOfMathDatabase:
+        Type: AWS::Serverless::SimpleTable
+        Properties:
+            TableName: power-of-math
+            PrimaryKey:
+                Name: id
+                Type: String
+
+    PowerOfMathFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            FunctionName: power-of-math
+            CodeUri: power-of-math/
+            Handler: app.handler
+            Runtime: nodejs22.x
+            Architectures:
+                - x86_64
+            Environment:
+                Variables:
+                    TABLE_NAME: !Ref PowerOfMathDatabase
+            Policies:
+                Statement:
+                    Sid: DynamoDBCrud
+                    Effect: Allow
+                    Action:
+                        - dynamodb:PutItem
+                        - dynamodb:DeleteItem
+                        - dynamodb:GetItem
+                        - dynamodb:Scan
+                        - dynamodb:Query
+                        - dynamodb:UpdateItem
+                    Resource: !GetAtt PowerOfMathDatabase.Arn
+            Events:
+                PowerOfMath:
+                    Type: Api
+                    Properties:
+                        RestApiId: !Ref PowerOfMathApi
+                        Path: /
+                        Method: post
+
+Outputs:
+    PowerOfMathApiEndpoint:
+        Description: 'API Gateway endpoint URL for Power of Math function'
+        Value: !Sub 'https://${PowerOfMathApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/'
+    PowerOfMathFunction:
+        Description: 'Power of Math Lambda Function ARN'
+        Value: !GetAtt PowerOfMathFunction.Arn
+    PowerOfMathFunctionIamRole:
+        Description: 'IAM Role created for Power of Math function'
+        Value: !GetAtt PowerOfMathFunctionRole.Arn
