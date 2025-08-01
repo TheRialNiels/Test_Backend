@@ -10,7 +10,8 @@ describe('Tests handler', () => {
     }
 
     before(() => {
-        process.env.TABLE_NAME = 'power-of-math'
+        const env = process.env.ENV || 'staging'
+        process.env.TABLE_NAME = `power-of-math-${env}`
     })
 
     it('verifies successful response', async () => {
