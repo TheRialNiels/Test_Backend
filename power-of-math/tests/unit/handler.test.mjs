@@ -2,23 +2,20 @@ import { expect } from 'chai'
 import { handler } from '../../app.mjs'
 
 describe('Tests handler', () => {
-    let context
     const testEvent = {
-        body: {
-            base: 5,
-            exponent: 5,
-        },
+        body: '{ "base": 5, "exponent": 5 }',
         headers: {
             Origin: 'https://www.example.com',
         },
     }
 
     before(() => {
-        process.env.TABLE_NAME = 'PowerOfMathDatabase'
+        const env = process.env.ENV || 'staging'
+        process.env.TABLE_NAME = `power-of-math-${env}`
     })
 
     it('verifies successful response', async () => {
-        const result = await handler(testEvent, context)
+        const result = await handler(testEvent)
 
         expect(result).to.be.an('object')
         expect(result.statusCode).to.equal(200)

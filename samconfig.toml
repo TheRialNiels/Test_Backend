@@ -3,7 +3,7 @@
 version = 0.1
 
 [default.global.parameters]
-stack_name = "power-of-math"
+stack_name = "power-of-math-prod"
 
 [default.build.parameters]
 cached = true
@@ -31,3 +31,30 @@ warm_containers = "EAGER"
 
 [default.local_start_lambda.parameters]
 warm_containers = "EAGER"
+
+[dev.deploy.parameters]
+stack_name = "power-of-math-dev"
+resolve_s3 = true
+s3_prefix = "power-of-math-dev"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "StageName=\"dev\" Environment=\"dev\""
+image_repositories = []
+
+[staging.deploy.parameters]
+stack_name = "power-of-math-staging"
+resolve_s3 = true
+s3_prefix = "power-of-math-staging"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "StageName=\"staging\" Environment=\"staging\""
+image_repositories = []
+
+[prod.deploy.parameters]
+stack_name = "power-of-math-prod"
+resolve_s3 = true
+s3_prefix = "power-of-math-prod"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "StageName=\"prod\" Environment=\"prod\""
+image_repositories = []
