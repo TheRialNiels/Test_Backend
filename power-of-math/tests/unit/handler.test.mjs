@@ -11,6 +11,7 @@ describe('Tests handler', () => {
 
     before(() => {
         const env = process.env.ENV || 'staging'
+        console.log('🚀 ~ env:', env)
         process.env.TABLE_NAME = `power-of-math-${env}`
     })
 
