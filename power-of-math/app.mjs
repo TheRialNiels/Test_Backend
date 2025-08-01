@@ -3,8 +3,6 @@ import * as cors from './lib/cors-util.mjs'
 
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb'
 
-import { v4 as uuidv4 } from 'uuid'
-
 const client = new DynamoDBClient({ region: 'us-east-1' })
 
 /**
@@ -22,12 +20,12 @@ const client = new DynamoDBClient({ region: 'us-east-1' })
 export const handler = async (event, context) => {
     const origin = cors.getOriginFromEvent(event)
     const body = JSON.parse(event.body)
-    const id = uuidv4()
+    // * Generate random id with Math function
+    const id = Math.random().toString(36).substring(2, 15)
     const base = +body.base
     const exponent = +body.exponent
     const mathResult = Math.pow(base, exponent)
     const tableName = process.env.TABLE_NAME
-    console.log('🚀 ~ handler ~ tableName:', tableName)
     await client.send(
         new PutItemCommand({
             TableName: tableName,
