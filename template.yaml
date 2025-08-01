@@ -12,12 +12,16 @@ Globals:
 Parameters:
     StageName:
         Type: String
-        Default: staging
+        Default: prod
+    Environment:
+        Type: String
+        Default: prod
 
 Resources:
     PowerOfMathApi:
         Type: AWS::Serverless::Api
         Properties:
+            Name: !Sub power-of-math-api-${Environment}
             StageName:
                 Ref: StageName
             Cors:
@@ -28,7 +32,7 @@ Resources:
     PowerOfMathDatabase:
         Type: AWS::Serverless::SimpleTable
         Properties:
-            TableName: power-of-math
+            TableName: !Sub power-of-math-${Environment}
             PrimaryKey:
                 Name: id
                 Type: String
@@ -36,7 +40,7 @@ Resources:
     PowerOfMathFunction:
         Type: AWS::Serverless::Function
         Properties:
-            FunctionName: power-of-math
+            FunctionName: !Sub power-of-math-${Environment}
             CodeUri: power-of-math/
             Handler: app.handler
             Runtime: nodejs22.x
