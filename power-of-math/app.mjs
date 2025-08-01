@@ -18,6 +18,7 @@ const client = new DynamoDBClient({ region: 'us-east-1' })
  *
  */
 export const handler = async (event, context) => {
+    console.log('🚀 ~ handler ~ event:', event)
     const origin = cors.getOriginFromEvent(event)
     const body = JSON.parse(event.body)
     // * Generate random id with Math function
