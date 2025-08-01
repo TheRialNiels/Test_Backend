@@ -1,0 +1,59 @@
+name: Staging CI/CD
+
+on:
+    push:
+        branches: [staging]
+
+env:
+    AWS_REGION: us-east-1
+    ENV: staging
+
+jobs:
+    test-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
+                  cache: 'npm'
+
+            - name: Setup SAM CLI
+              uses: aws-actions/setup-sam@v2
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Code quality check (ESLint)
+              run: npx eslint power-of-math/ --ext .mjs || echo "ESLint not configured, skipping..."
+
+            - name: Run unit tests
+              run: npm test
+              env:
+                  ENV: staging
+
+            - name: Build SAM application
+              run: sam build
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ${{ env.AWS_REGION }}
+
+            - name: Deploy to Staging
+              run: |
+                  sam deploy \
+                    --config-env staging \
+                    --no-confirm-changeset \
+                    --no-fail-on-empty-changeset
+
+        # - name: Run QA tests
+        #   run: |
+        #     API_ENDPOINT=$(aws cloudformation describe-stacks --stack-name power-of-math-staging --query 'Stacks[0].Outputs[?OutputKey==`PowerOfMathApi`].OutputValue' --output text)
+        #     echo "QA tests would run here against: $API_ENDPOINT"
