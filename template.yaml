@@ -68,17 +68,6 @@ Resources:
                         RestApiId: !Ref PowerOfMathApi
                         Path: /
                         Method: post
-        Metadata:
-            BuildMethod: esbuild
-            BuildProperties:
-                Format: esm
-                OutExtension:
-                    - .js=.mjs
-                Minify: true
-                Target: es2022
-                Sourcemap: false
-                Banner:
-                    - js=import { createRequire } from 'module'; const require = createRequire(import.meta.url);
 
 Outputs:
     PowerOfMathApiEndpoint:
