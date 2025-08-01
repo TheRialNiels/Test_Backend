@@ -31,14 +31,6 @@ jobs:
             - name: Code quality check (ESLint)
               run: npx eslint power-of-math/ --ext .mjs || echo "ESLint not configured, skipping..."
 
-            - name: Run unit tests
-              run: npm test
-              env:
-                  ENV: prod
-
-            - name: Build SAM application
-              run: sam build
-
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v4
               with:
@@ -46,6 +38,13 @@ jobs:
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: ${{ env.AWS_REGION }}
 
+            - name: Run unit tests
+              run: npm test
+              env:
+                  ENV: prod
+
+            - name: Build SAM application
+              run: sam build
             - name: Deploy to Production
               run: |
                   sam deploy \
