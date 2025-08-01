@@ -1,0 +1,11 @@
+{
+    "Parameters": {
+        "Environment": "staging",
+        "StageName": "staging"
+    },
+    "PowerOfMathFunction": {
+        "ENVIRONMENT": "staging",
+        "REGION": "us-east-1",
+        "TABLE_NAME": "power-of-math-staging"
+    }
+}
