@@ -27,6 +27,7 @@ export const handler = async (event, context) => {
     const exponent = +body.exponent
     const mathResult = Math.pow(base, exponent)
     const tableName = process.env.TABLE_NAME
+    console.log('🚀 ~ handler ~ tableName:', tableName)
     await client.send(
         new PutItemCommand({
             TableName: tableName,
