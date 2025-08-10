@@ -53,7 +53,15 @@ jobs:
                     --no-confirm-changeset \
                     --no-fail-on-empty-changeset
 
-        # - name: Run QA tests
-        #   run: |
-        #     API_ENDPOINT=$(aws cloudformation describe-stacks --stack-name power-of-math-staging --query 'Stacks[0].Outputs[?OutputKey==`PowerOfMathApi`].OutputValue' --output text)
-        #     echo "QA tests would run here against: $API_ENDPOINT"
+            - name: Run QA tests
+              run: |
+                  BUILD_ID=$(aws codebuild start-build \
+                    --project-name qa-tests-automation \
+                    --environment-variables-override name=COMMAND,value=test.example \
+                    --query 'build.id' --output text)
+
+                  echo "Started CodeBuild: $BUILD_ID"
+
+                  # Wait for build to complete and get status
+                  aws codebuild batch-get-builds --ids $BUILD_ID \
+                    --query 'builds[0].buildStatus' --output text
