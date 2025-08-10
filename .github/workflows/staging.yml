@@ -57,7 +57,7 @@ jobs:
               run: |
                   BUILD_ID=$(aws codebuild start-build \
                     --project-name qa-tests-automation \
-                    --environment-variables-override name=COMMAND,value=test.example \
+                    --environment-variables-override name=COMMAND,value=test.quickTest \
                     --query 'build.id' --output text)
 
                   echo "Started CodeBuild: $BUILD_ID"
