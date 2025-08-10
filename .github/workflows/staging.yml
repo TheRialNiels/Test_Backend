@@ -62,6 +62,20 @@ jobs:
 
                   echo "Started CodeBuild: $BUILD_ID"
 
-                  # Wait for build to complete and get status
-                  aws codebuild batch-get-builds --ids $BUILD_ID \
-                    --query 'builds[0].buildStatus' --output text
+                  # Wait for build to complete
+                  while true; do
+                    STATUS=$(aws codebuild batch-get-builds --ids $BUILD_ID \
+                      --query 'builds[0].buildStatus' --output text)
+
+                    echo "Build status: $STATUS"
+
+                    if [ "$STATUS" = "SUCCEEDED" ]; then
+                      echo "QA tests passed!"
+                      break
+                    elif [ "$STATUS" = "FAILED" ] || [ "$STATUS" = "FAULT" ] || [ "$STATUS" = "STOPPED" ] || [ "$STATUS" = "TIMED_OUT" ]; then
+                      echo "QA tests failed with status: $STATUS"
+                      exit 1
+                    fi
+
+                    sleep 30
+                  done
