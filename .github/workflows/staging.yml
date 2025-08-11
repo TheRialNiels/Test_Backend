@@ -65,7 +65,7 @@ jobs:
               run: |
                   BUILD_ID=$(aws codebuild start-build \
                     --project-name qa-tests-automation \
-                    --environment-variables-override name=COMMAND,value=test.quickTest \
+                    --environment-variables-override name=COMMAND,value=test.quickTest.successExample \
                     --query 'build.id' --output text)
 
                   echo "Started CodeBuild: $BUILD_ID"
@@ -107,7 +107,7 @@ jobs:
                   secret: ${{ secrets.GITHUB_TOKEN }}
                   approvers: ${{ steps.qa-approvers.outputs.approvers }}
                   minimum-approvals: 1
-                  issue-title: "QA Tests Failed - Manual Approval Required"
+                  issue-title: 'QA Tests Failed - Manual Approval Required'
                   issue-body: |
                       QA tests failed for staging deployment.
 
