@@ -88,11 +88,23 @@ jobs:
                     sleep 30
                   done
 
+            - name: Get QA team approvers
+              if: steps.qa-tests.outcome == 'failure'
+              id: qa-approvers
+              run: |
+                  if [ -f .github/CODEOWNERS ]; then
+                    QA_APPROVERS=$(grep -E "@.*qa" .github/CODEOWNERS | head -1 | sed 's/.*@\([^[:space:]]*\).*/\1/' | tr '/' ',')
+                    echo "approvers=${QA_APPROVERS:-${{ github.repository_owner }}}" >> $GITHUB_OUTPUT
+                  else
+                    echo "approvers=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+                  fi
+
             - name: Manual approval for QA test failure
               if: steps.qa-tests.outcome == 'failure'
               uses: trstringer/manual-approval@v1
               with:
                   secret: ${{ secrets.GITHUB_TOKEN }}
+                  approvers: ${{ steps.qa-approvers.outputs.approvers }}
                   minimum-approvals: 1
                   issue-title: "QA Tests Failed - Manual Approval Required"
                   issue-body: |
