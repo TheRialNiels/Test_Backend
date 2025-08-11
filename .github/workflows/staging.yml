@@ -13,6 +13,10 @@ env:
 jobs:
     test-and-deploy:
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            issues: write
+            pull-requests: write
 
         steps:
             - name: Checkout code
@@ -88,8 +92,8 @@ jobs:
               if: steps.qa-tests.outcome == 'failure'
               uses: trstringer/manual-approval@v1
               with:
-                  secret: ${{ github.TOKEN }}
-                  approvers: ${{ github.actor }}
+                  secret: ${{ secrets.GITHUB_TOKEN }}
+                  approvers: ${{ github.repository_owner }}
                   minimum-approvals: 1
                   issue-title: "QA Tests Failed - Manual Approval Required"
                   issue-body: |
