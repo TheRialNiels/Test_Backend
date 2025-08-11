@@ -93,14 +93,13 @@ jobs:
               uses: trstringer/manual-approval@v1
               with:
                   secret: ${{ secrets.GITHUB_TOKEN }}
-                  approvers: ${{ github.repository_owner }}
                   minimum-approvals: 1
                   issue-title: "QA Tests Failed - Manual Approval Required"
                   issue-body: |
                       QA tests failed for staging deployment.
-                      
+
                       Please review the test results and approve if this is a false positive.
-                      
+
                       **Commit:** ${{ github.sha }}
                       **Branch:** ${{ github.ref_name }}
                       **Actor:** ${{ github.actor }}
